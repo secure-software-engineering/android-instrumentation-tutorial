@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RV2013</string>
+    <string name="menu_settings">Settings</string>
+    <string name="sendSms">Send SMS</string>
+    <string name="phonenr">Phone#:</string>
+    <string name="message">Message:</string>
+
+</resources>
