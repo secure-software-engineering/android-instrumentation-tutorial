@@ -1,0 +1,5 @@
+package instrumentation;
+
+public class Settings {
+	public static String androidJAR = "/lib/android.jar";
+}

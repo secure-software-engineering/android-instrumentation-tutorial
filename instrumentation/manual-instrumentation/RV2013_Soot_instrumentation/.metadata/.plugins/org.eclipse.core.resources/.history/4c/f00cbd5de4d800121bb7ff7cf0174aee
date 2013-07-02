@@ -1,0 +1,37 @@
+package instrumentation;
+
+import java.util.Collections;
+
+import soot.G;
+import soot.Scene;
+import soot.SootClass;
+import soot.options.Options;
+
+public class Settings {
+	private static boolean SOOT_INITIALIZED = false;
+	public static String androidJAR = "/lib/android.jar";
+	
+	public static void initialiseSoot(){
+		if (SOOT_INITIALIZED)
+			return;
+		G.reset();
+		
+		Options.v().set_allow_phantom_refs(true);
+		Options.v().set_whole_program(true);
+		Options.v().set_prepend_classpath(true);
+		Options.v().set_validate(true);
+		
+		Options.v().set_output_format(Options.output_format_dex);
+		Options.v().set_process_dir(Collections.singletonList(apk));
+		Options.v().set_force_android_jar(androidJAR);
+		Options.v().set_src_prec(Options.src_prec_apk);
+		
+		Options.v().set_soot_classpath(bin + ":" + androidJAR);
+		
+		Scene.v().loadNecessaryClasses();
+		Scene.v().forceResolve(INST_SOOT_CONNECTOR, SootClass.BODIES);
+
+		SOOT_INITIALIZED = true;
+	}
+	
+}

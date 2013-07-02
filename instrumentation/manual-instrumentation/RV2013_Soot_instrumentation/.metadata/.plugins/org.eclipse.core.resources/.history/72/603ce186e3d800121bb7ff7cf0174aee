@@ -1,0 +1,5 @@
+package instrumentation;
+
+public class MySceneTransformer extends SceneTransformer{
+
+}

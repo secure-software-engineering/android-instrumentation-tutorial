@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="soot.options.Options"/>
+<fullyQualifiedTypeName name="soot.Body"/>
+<fullyQualifiedTypeName name="polyglot.visit.DeadCodeEliminator"/>
+<fullyQualifiedTypeName name="soot.jimple.toolkits.scalar.DeadAssignmentEliminator"/>
+<fullyQualifiedTypeName name="soot.toolkits.scalar.UnusedLocalEliminator"/>
+</qualifiedTypeNameHistroy>

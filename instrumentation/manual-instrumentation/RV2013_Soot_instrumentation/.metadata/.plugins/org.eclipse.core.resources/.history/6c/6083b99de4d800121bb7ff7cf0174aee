@@ -1,0 +1,13 @@
+package instrumentation;
+
+import soot.PackManager;
+import soot.Transform;
+
+public class Main {
+
+	public static void main(String[] args) {
+		PackManager.v().getPack("wjtp").add(new Transform("wjtp.myAnalysis", new MySceneTransformer()));
+
+	}
+
+}

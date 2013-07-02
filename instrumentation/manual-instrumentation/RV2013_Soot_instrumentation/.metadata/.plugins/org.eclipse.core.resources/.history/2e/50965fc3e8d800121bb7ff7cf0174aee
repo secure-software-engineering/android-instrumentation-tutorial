@@ -1,0 +1,22 @@
+package instrumentation;
+
+import java.util.Map;
+
+import soot.Scene;
+import soot.SceneTransformer;
+import soot.SootClass;
+
+public class MySceneTransformer extends SceneTransformer{
+
+	@Override
+	protected void internalTransform(String arg0, Map arg1) {
+		for (SootClass c : Scene.v().getApplicationClasses()) {
+			transform(c);
+		}
+	}
+	
+	private void transform(SootClass c) {
+		
+	}
+
+}

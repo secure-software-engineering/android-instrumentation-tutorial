@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+	<bundle bundleID="479" localization="OSGI-INF/l10n/bundle" name="soot-ifds" project="heros">
+		<library name="soot-ifds.jar"/>
+		<library name="guava-13.0.jar"/>
+		<library name="soot-trunk.jar"/>
+	</bundle>
+</map>

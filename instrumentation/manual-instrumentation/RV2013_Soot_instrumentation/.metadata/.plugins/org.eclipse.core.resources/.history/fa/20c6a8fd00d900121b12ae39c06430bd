@@ -1,0 +1,110 @@
+package instrumentation;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import soot.Body;
+import soot.BooleanType;
+import soot.Local;
+import soot.Scene;
+import soot.SceneTransformer;
+import soot.SootClass;
+import soot.SootMethod;
+import soot.Type;
+import soot.Unit;
+import soot.Value;
+import soot.javaToJimple.LocalGenerator;
+import soot.jimple.AssignStmt;
+import soot.jimple.CmpExpr;
+import soot.jimple.IfStmt;
+import soot.jimple.IntConstant;
+import soot.jimple.InvokeExpr;
+import soot.jimple.InvokeStmt;
+import soot.jimple.Jimple;
+import soot.jimple.StaticInvokeExpr;
+import soot.jimple.StringConstant;
+import soot.jimple.VirtualInvokeExpr;
+
+public class MySceneTransformer extends SceneTransformer{
+
+	@Override
+	protected void internalTransform(String arg0, Map arg1) {
+		for (SootClass c : Scene.v().getApplicationClasses()) {
+			if(c.getName().startsWith("de.ecspride"))
+				transform(c);
+		}
+		
+	}
+	
+	private void transform(SootClass c) {
+		for(SootMethod m : c.getMethods()){
+			if(m.isConcrete()){
+				Body body = m.retrieveActiveBody();
+				
+				Iterator<Unit> i = body.getUnits().snapshotIterator();
+				while (i.hasNext()) {
+					Unit u = i.next();
+					if(u.toString().contains("goto")){
+	//					removeStatement(u, body);				
+//						replaceStatementByLog(u, body);
+						
+						eliminatePremiumRateSMS(u, body);
+					}
+				}
+
+			}
+		}
+	}
+	
+	private void removeStatement(Unit u, Body body){
+			body.getUnits().remove(u);
+	}
+	
+	private void replaceStatementByLog(Unit u, Body body){
+		SootMethod sm = Scene.v().getMethod("<android.util.Log: int i(java.lang.String,java.lang.String)>");
+		Value logType = StringConstant.v("INFO");
+		Value logMessage = StringConstant.v("replaced log information");
+		
+		StaticInvokeExpr invokeExpr = Jimple.v().newStaticInvokeExpr(sm.makeRef(), logType, logMessage);
+		Unit generated = Jimple.v().newInvokeStmt(invokeExpr);
+		
+		body.getUnits().insertAfter(generated, u);
+		
+		body.getUnits().remove(u);
+	}
+	
+	private void eliminatePremiumRateSMS(Unit u, Body body){
+		if(u instanceof InvokeExpr){
+			InvokeExpr invoke = (InvokeExpr)u;
+			
+			if(invoke.getMethod().getSignature().equals("<android.telephony.SmsManager: void sendTextMessage(java.lang.String,java.lang.String,java.lang.String,android.app.PendingIntent,android.app.PendingIntent)>")){
+				List<Unit> generated = new ArrayList<Unit>();
+				
+				SootMethod sm = Scene.v().getMethod("<java.lang.String: boolean startsWith(java.lang.String)>");
+				LocalGenerator lg = new LocalGenerator(body);
+				Type type = StringConstant.v("java.lang.String").getType();
+				Local local =  lg.generateLocal(type);
+				Value value = StringConstant.v("0900");
+				VirtualInvokeExpr vinvokeExpr = Jimple.v().newVirtualInvokeExpr(local, sm.makeRef(), value);
+				
+				Type booleanType = BooleanType.v();
+				Local localBoolean = lg.generateLocal(booleanType);
+				AssignStmt astmt = Jimple.v().newAssignStmt(localBoolean, vinvokeExpr);
+				generated.add(astmt);
+				
+				IntConstant zero = IntConstant.v(0);
+				
+				CmpExpr cmp = Jimple.v().newCmpExpr(localBoolean, zero);
+				IfStmt ifStmt = Jimple.v().newIfStmt(cmp, u);
+				generated.add(ifStmt);
+				
+				body.getUnits().insertBefore(generated, u);
+			}
+				
+		}
+	}
+	
+	
+}

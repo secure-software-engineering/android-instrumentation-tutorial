@@ -1,0 +1,44 @@
+package instrumentation;
+
+import java.util.Iterator;
+import java.util.Map;
+
+import soot.Body;
+import soot.Scene;
+import soot.SceneTransformer;
+import soot.SootClass;
+import soot.SootMethod;
+import soot.Unit;
+
+public class MySceneTransformer extends SceneTransformer{
+
+	@Override
+	protected void internalTransform(String arg0, Map arg1) {
+		for (SootClass c : Scene.v().getApplicationClasses()) {
+			if(c.getName().startsWith("de.ecspride"))
+				transform(c);
+		}
+		
+	}
+	
+	private void transform(SootClass c) {
+		for(SootMethod m : c.getMethods()){
+			if(m.isConcrete()){
+				Body body = m.retrieveActiveBody();
+				
+				Iterator<Unit> i = body.getUnits().snapshotIterator();
+				while (i.hasNext()) {
+					Unit u = i.next();
+					removePrintln(u, body);				
+				}
+
+			}
+		}
+	}
+	
+	private void removePrintln(Unit u, Body body){
+		if(u.toString().contains("println")){
+			body.getUnits().remove(u);
+		}
+	}
+}
