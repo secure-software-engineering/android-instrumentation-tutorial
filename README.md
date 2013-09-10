@@ -1,7 +1,7 @@
 android-instrumentation-tutorial
 ================================
 
-<b>All necessary information will be provided soon!</b>
+<b>The VM will be provided at the workshop! You do not have to download anything in advance!</b>
 
 Program instrumentation is a widely used mechanism in different software engineering areas. 
 It can be used for creating profilers and debuggers, for detecting programming errors at runtime, or for securing programs through inline reference monitoring.
